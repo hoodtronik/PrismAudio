@@ -1,5 +1,20 @@
 module.exports = {
   run: [
+    // Step 0: Prompt for HuggingFace token (needed for gated model google/t5gemma-l-l-ul2-it)
+    {
+      method: "input",
+      params: {
+        title: "HuggingFace Token Required",
+        description: "PrismAudio requires access to the gated model 'google/t5gemma-l-l-ul2-it'.\n\n1. Go to https://huggingface.co/google/t5gemma-l-l-ul2-it and request access\n2. Go to https://huggingface.co/settings/tokens to create a token\n3. Paste your token below",
+        form: [{
+          key: "hf_token",
+          title: "HuggingFace Token",
+          description: "Paste your HuggingFace access token (starts with hf_)",
+          type: "password",
+          required: true
+        }]
+      }
+    },
     // Step 1: Clone the ThinkSound repo (prismaudio branch) into app/
     {
       when: "{{!exists('app/app.py')}}",
@@ -32,6 +47,17 @@ module.exports = {
           "uv pip install numpy absl-py einops einshape huggingface-hub sentencepiece",
           "uv pip install flax --no-deps",
           "uv pip install jax jaxlib msgpack optax rich typing-extensions",
+        ]
+      }
+    },
+    // Step 3b: Login to HuggingFace with the provided token
+    {
+      method: "shell.run",
+      params: {
+        venv: "env",
+        path: "app",
+        message: [
+          "huggingface-cli login --token {{args.hf_token}} --add-to-git-credential",
         ]
       }
     },
