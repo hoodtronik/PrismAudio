@@ -1,7 +1,5 @@
 {
-  "title": "PrismAudio.git",
-  "description": "",
-  "icon": "icon.png",
-  "links": [],
-  "posts": []
+  "title": "PrismAudio",
+  "description": "Video-to-Audio generation with Chain-of-Thought reasoning (ICLR 2026)",
+  "icon": "icon.png"
 }
