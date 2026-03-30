@@ -10,72 +10,19 @@ module.exports = async (kernel) => {
   try {
     hfToken = fs.readFileSync(hfTokenPath, 'utf8').trim()
   } catch (e) {
-    // Token file doesn't exist yet
+    // Token file doesn't exist — will prompt during install
   }
-  const hfLoggedIn = !!hfToken
 
   return {
     daemon: true,
     run: [
-      // If HF token missing, prompt user to set it up
-      {
-        when: "{{!self.hfLoggedIn}}",
-        method: "input",
-        params: {
-          title: "🔑 HuggingFace Login Required",
-          description: [
-            "PrismAudio needs a HuggingFace token to download the T5Gemma model.",
-            "",
-            "📋 Follow these steps:",
-            "",
-            "Step 1️⃣  Create a free account at https://huggingface.co/join",
-            "",
-            "Step 2️⃣  Go to the model page and click 'Agree and access repository':",
-            "   → https://huggingface.co/google/t5gemma-l-l-ul2-it",
-            "",
-            "Step 3️⃣  Create an access token:",
-            "   → https://huggingface.co/settings/tokens",
-            "   → Click 'Create new token' → Select 'Read' permission → Copy it",
-            "",
-            "Step 4️⃣  Paste your token below and click Submit",
-          ].join("\n"),
-          form: [{
-            key: "hf_token",
-            title: "HuggingFace Access Token",
-            description: "Paste your token here (starts with hf_)",
-            type: "password",
-            required: true
-          }]
-        }
-      },
-      // Login and save the token locally
-      {
-        when: "{{!self.hfLoggedIn}}",
-        method: "shell.run",
-        params: {
-          venv: "env",
-          path: "app",
-          message: [
-            "huggingface-cli login --token {{input.hf_token}} --add-to-git-credential",
-          ]
-        }
-      },
-      {
-        when: "{{!self.hfLoggedIn}}",
-        method: "fs.write",
-        params: {
-          path: ".hf_token",
-          text: "{{input.hf_token}}"
-        }
-      },
-      // Start the app — pass HF_TOKEN explicitly so Pinokio's conda shell can authenticate
       {
         method: "shell.run",
         params: {
           venv: "env",
           env: {
             GRADIO_TEMP_DIR: "{{path.resolve(cwd, 'cache')}}",
-            HF_TOKEN: hfToken || "{{input.hf_token || ''}}",
+            HF_TOKEN: hfToken,
           },
           path: "app",
           message: [
@@ -93,7 +40,6 @@ module.exports = async (kernel) => {
           url: "{{input.event[0]}}"
         }
       }
-    ],
-    hfLoggedIn
+    ]
   }
 }
