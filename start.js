@@ -5,9 +5,15 @@ const fs = require('fs')
 module.exports = async (kernel) => {
   let port = await kernel.port()
 
-  // Check if HuggingFace token exists
+  // Read HF token from the standard cache location
   const hfTokenPath = path.join(os.homedir(), '.cache', 'huggingface', 'token')
-  const hfLoggedIn = fs.existsSync(hfTokenPath)
+  let hfToken = ''
+  try {
+    hfToken = fs.readFileSync(hfTokenPath, 'utf8').trim()
+  } catch (e) {
+    // Token file doesn't exist yet
+  }
+  const hfLoggedIn = !!hfToken
 
   return {
     daemon: true,
@@ -55,13 +61,14 @@ module.exports = async (kernel) => {
           ]
         }
       },
-      // Start the app
+      // Start the app — pass HF_TOKEN explicitly so Pinokio's conda shell can authenticate
       {
         method: "shell.run",
         params: {
           venv: "env",
           env: {
             GRADIO_TEMP_DIR: "{{path.resolve(cwd, 'cache')}}",
+            HF_TOKEN: hfToken || "{{input.hf_token || ''}}",
           },
           path: "app",
           message: [
