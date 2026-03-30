@@ -67,6 +67,8 @@ module.exports = {
           "uv pip install facenet_pytorch==2.6.0 --no-deps",
           // Tensorflow CPU for feature extraction
           "uv pip install tensorflow-cpu==2.15.0",
+          // Fix ml_dtypes conflict: tensorflow 2.15 pins 0.2.0 but jax needs >=0.4.0
+          "uv pip install \"ml_dtypes>=0.4.0\"",
         ]
       }
     },
