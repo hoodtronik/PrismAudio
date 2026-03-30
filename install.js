@@ -76,6 +76,14 @@ module.exports = {
         ]
       }
     },
+    // Step 3c: Save token locally so start.js can inject it as HF_TOKEN env var
+    {
+      method: "fs.write",
+      params: {
+        path: ".hf_token",
+        text: "{{args.hf_token}}"
+      }
+    },
     // Step 4: Install inference dependencies manually
     // The upstream requirements.txt fails on Windows due to triton, deepspeed, jax[cuda12]
     // So we install only the packages needed for inference

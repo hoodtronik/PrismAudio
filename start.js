@@ -1,12 +1,11 @@
-const os = require('os')
 const path = require('path')
 const fs = require('fs')
 
 module.exports = async (kernel) => {
   let port = await kernel.port()
 
-  // Read HF token from the standard cache location
-  const hfTokenPath = path.join(os.homedir(), '.cache', 'huggingface', 'token')
+  // Read HF token from local .hf_token file (saved during install)
+  const hfTokenPath = path.join(__dirname, '.hf_token')
   let hfToken = ''
   try {
     hfToken = fs.readFileSync(hfTokenPath, 'utf8').trim()
@@ -49,7 +48,7 @@ module.exports = async (kernel) => {
           }]
         }
       },
-      // Login with the provided token
+      // Login and save the token locally
       {
         when: "{{!self.hfLoggedIn}}",
         method: "shell.run",
@@ -59,6 +58,14 @@ module.exports = async (kernel) => {
           message: [
             "huggingface-cli login --token {{input.hf_token}} --add-to-git-credential",
           ]
+        }
+      },
+      {
+        when: "{{!self.hfLoggedIn}}",
+        method: "fs.write",
+        params: {
+          path: ".hf_token",
+          text: "{{input.hf_token}}"
         }
       },
       // Start the app — pass HF_TOKEN explicitly so Pinokio's conda shell can authenticate
