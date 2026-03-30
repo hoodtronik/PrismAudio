@@ -26,7 +26,7 @@ module.exports = async (kernel) => {
           },
           path: "app",
           message: [
-            `python app.py --server_port ${port}`,
+            `python app.py --server_name 127.0.0.1 --server_port ${port}`,
           ],
           on: [{
             "event": "/http:\\/\\/[0-9.:]+/",
