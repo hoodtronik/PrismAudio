@@ -4,12 +4,27 @@ module.exports = {
     {
       method: "input",
       params: {
-        title: "HuggingFace Token Required",
-        description: "PrismAudio requires access to the gated model 'google/t5gemma-l-l-ul2-it'.\n\n1. Go to https://huggingface.co/google/t5gemma-l-l-ul2-it and request access\n2. Go to https://huggingface.co/settings/tokens to create a token\n3. Paste your token below",
+        title: "🔑 HuggingFace Token Required",
+        description: [
+          "PrismAudio uses Google's T5Gemma model, which requires a free HuggingFace account.",
+          "",
+          "📋 Follow these steps:",
+          "",
+          "Step 1️⃣  Create a free account at https://huggingface.co/join",
+          "",
+          "Step 2️⃣  Go to the model page and click 'Agree and access repository':",
+          "   → https://huggingface.co/google/t5gemma-l-l-ul2-it",
+          "",
+          "Step 3️⃣  Create an access token:",
+          "   → https://huggingface.co/settings/tokens",
+          "   → Click 'Create new token' → Select 'Read' permission → Copy it",
+          "",
+          "Step 4️⃣  Paste your token below and click Submit",
+        ].join("\n"),
         form: [{
           key: "hf_token",
-          title: "HuggingFace Token",
-          description: "Paste your HuggingFace access token (starts with hf_)",
+          title: "HuggingFace Access Token",
+          description: "Paste your token here (starts with hf_)",
           type: "password",
           required: true
         }]
