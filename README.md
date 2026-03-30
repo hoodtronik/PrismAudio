@@ -15,8 +15,11 @@
 https://github.com/hoodtronik/PrismAudio.git
 ```
 
-3. Click **Install** and wait for setup to complete
-4. Click **Start** to launch the Gradio web UI
+3. The installer will ask for your **HuggingFace token** (free account required):
+   - [Request access](https://huggingface.co/google/t5gemma-l-l-ul2-it) to the gated T5Gemma model
+   - [Create a token](https://huggingface.co/settings/tokens) and paste it when prompted
+4. Click **Install** and wait for setup to complete
+5. Click **Start** to launch the Gradio web UI
 
 ## What It Does
 
@@ -30,6 +33,7 @@ Upload a video and provide an optional text prompt — PrismAudio generates real
 
 ## Requirements
 
+- **HuggingFace Account**: Free — needed for the gated [T5Gemma](https://huggingface.co/google/t5gemma-l-l-ul2-it) model
 - **GPU**: NVIDIA GPU with CUDA support (8GB+ VRAM recommended)
 - **Disk**: ~10GB for model weights and dependencies
 - **OS**: Windows (tested), Linux (should work)
