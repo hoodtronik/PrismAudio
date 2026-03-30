@@ -82,7 +82,7 @@ module.exports = async (kernel) => {
             `python app.py --server_port ${port}`,
           ],
           on: [{
-            "event": "/(http:\\/\\/\\S+)/",
+            "event": "/http:\\/\\/[0-9.:]+/",
             "done": true
           }]
         }
@@ -90,7 +90,7 @@ module.exports = async (kernel) => {
       {
         method: "local.set",
         params: {
-          url: "{{input.event[1]}}"
+          url: "{{input.event[0]}}"
         }
       }
     ],
