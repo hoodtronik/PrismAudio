@@ -165,6 +165,18 @@ module.exports = {
         ]
       }
     },
+    // Step 7: Patch app.py with quality & UX improvements
+    // (seed control, TF32 precision, Steps/CFG sliders, CoT prompt examples)
+    {
+      method: "shell.run",
+      params: {
+        venv: "env",
+        path: "app",
+        message: [
+          "python ../fix_app.py",
+        ]
+      }
+    },
     {
       method: 'input',
       params: {
