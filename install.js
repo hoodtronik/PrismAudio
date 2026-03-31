@@ -65,6 +65,17 @@ module.exports = {
         ]
       }
     },
+    // Step 3a: Fix videoprism GCS paths — download sentencepiece model locally
+    // and patch gs:// references that don't work on Windows
+    {
+      method: "shell.run",
+      params: {
+        venv: "env",
+        message: [
+          "python fix_videoprism_gcs.py",
+        ]
+      }
+    },
     // Step 3b: Login to HuggingFace with the provided token
     {
       method: "shell.run",
