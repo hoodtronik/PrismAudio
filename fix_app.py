@@ -332,6 +332,77 @@ def patch_file():
         print("✅ Patched: clear outputs include seed/steps/cfg")
 
     # ================================================================
+    # 12. Enforce MP4 / YUV420p standard
+    # ================================================================
+    old_convert = (
+        '    result = subprocess.run(\n'
+        '        [\n'
+        '            "ffmpeg", "-y", "-i", src,\n'
+        '            "-c:v", "libx264", "-preset", "fast",\n'
+    )
+    new_convert = (
+        '    result = subprocess.run(\n'
+        '        [\n'
+        '            "ffmpeg", "-y", "-i", src,\n'
+        '            "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "fast",\n'
+    )
+    for nl in ['\r\n', '\n']:
+        old = old_convert.replace('\n', nl)
+        if old in text:
+            text = text.replace(old, new_convert.replace('\n', nl))
+            patched = True
+            print("✅ Patched: MP4 conversion uses yuv420p format")
+            break
+
+    old_skip = (
+        '        if src_ext != ".mp4":\n'
+        '            log_step("   Converting to mp4...")\n'
+        '            ok, err = convert_to_mp4(video_file, mp4_path)\n'
+        '            if not ok:\n'
+        '                yield log_step(f"❌ Video conversion failed:\\n{err}"), None\n'
+        '                return\n'
+        '        else:\n'
+        '            shutil.copy(video_file, mp4_path)'
+    )
+    new_skip = (
+        '        log_step("   Ensuring video is h264/yuv420p MP4...")\n'
+        '        ok, err = convert_to_mp4(video_file, mp4_path)\n'
+        '        if not ok:\n'
+        '            yield log_step(f"❌ Video conversion failed:\\n{err}"), None\n'
+        '            return'
+    )
+    for nl in ['\r\n', '\n']:
+        old = old_skip.replace('\n', nl)
+        if old in text:
+            text = text.replace(old, new_skip.replace('\n', nl))
+            patched = True
+            print("✅ Patched: Enforce video conversion for ALL formats")
+            break
+
+    # ================================================================
+    # 13. Fix audio static caused by float16 autocast
+    # ================================================================
+    old_autocast_1 = "        with torch.amp.autocast('cuda'):\n            conditioning ="
+    new_autocast_1 = (
+        "        autocast_dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float32\n"
+        "        with torch.autocast(device_type='cuda', dtype=autocast_dtype):\n"
+        "            conditioning ="
+    )
+    old_autocast_2 = "        with torch.amp.autocast('cuda'):\n            if diffusion_objective"
+    new_autocast_2 = "        with torch.autocast(device_type='cuda', dtype=autocast_dtype):\n            if diffusion_objective"
+
+    for nl in ['\r\n', '\n']:
+        old1 = old_autocast_1.replace('\n', nl)
+        old2 = old_autocast_2.replace('\n', nl)
+        
+        if old1 in text and old2 in text:
+            text = text.replace(old1, new_autocast_1.replace('\n', nl))
+            text = text.replace(old2, new_autocast_2.replace('\n', nl))
+            patched = True
+            print("✅ Patched: Replaced torch.amp.autocast with bfloat16/float32 safe autocast")
+            break
+
+    # ================================================================
     # Write out
     # ================================================================
     if patched:
