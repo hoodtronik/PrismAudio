@@ -34,6 +34,12 @@ Upload a video and provide an optional text prompt — PrismAudio generates real
 - **Built-in Gradio Web UI** — Upload videos, enter prompts, download results
 - **Automatic model download** — Weights are fetched from HuggingFace on first run
 
+### Known Limitations
+> [!WARNING]
+> **Digital Fuzz / Background Noise:** The current Prismaudio checkpoint is highly usable but natively produces a layer of digital "fuzz" or static over the generated audio. This is an inherent acoustic artifact caused by how the base non-autoregressive DiT (Diffusion Transformer) model decodes the latent space via its VAE.
+> 
+> *Our installer includes patches that force `bfloat16` precision to prevent catastrophic `float16` static blow-ups on modern GPUs, but the underlying baseline noise floor of the checkpoint itself remains. Future model updates or AI noise-reduction post-processing plugins may be required for pristine production audio.*
+
 ## Requirements
 
 - **HuggingFace Account**: Free — needed for the gated [T5Gemma](https://huggingface.co/google/t5gemma-l-l-ul2-it) model
