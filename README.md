@@ -1,5 +1,8 @@
 # PrismAudio - Pinokio Installer
 
+> ⚠️ **Early Access — Do Not Install Yet**
+> This installer is under active development and still has bugs being worked out. Please wait for a stable release before installing. Star/watch this repo to get notified when it's ready.
+
 🎵 **One-click installer** for [PrismAudio](https://github.com/FunAudioLLM/ThinkSound/tree/prismaudio) — the first Video-to-Audio generation framework with Reinforcement Learning and Chain-of-Thought reasoning. **ICLR 2026 Main Conference**.
 
 ![PrismAudio](icon.png)

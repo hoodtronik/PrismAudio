@@ -133,12 +133,24 @@ module.exports = {
         }
       }
     },
-    // Step 6: Install ffmpeg via conda (required for video processing)
+    // Step 6: Install ffmpeg 6.x via conda (torio needs FFmpeg 6 shared libs)
     {
       method: "shell.run",
       params: {
         message: [
-          "conda install -y -c conda-forge \"ffmpeg<7\"",
+          "conda install -y -c conda-forge \"ffmpeg>=6,<7\"",
+        ]
+      }
+    },
+    // Step 6b: Copy FFmpeg DLLs into torio/lib so libtorio_ffmpeg6.pyd can load them
+    // (Windows only — on Linux/macOS the system linker resolves them automatically)
+    {
+      method: "shell.run",
+      params: {
+        venv: "env",
+        path: "app",
+        message: [
+          "python ../fix_ffmpeg.py",
         ]
       }
     },
